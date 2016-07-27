@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <meta http-equiv="refresh" content="60">
+    <style>
+      body {font-size: 400px;}
+      p {float: left; margin: 5px;text-align:center; }
+      p.small {font-size: 50%;}
+    </style>
+  </head>
+  <body>
+    <p>
+    {{'%0.1f' % temperature.outside|float}}
+    </p>
+    <p class="small">
+      C&deg;
+    </p>
+
+    <p>
+      {{'%0.1f' % electricity.normal|float}}
+    </p>
+    <p class="small">
+      kW
+    </p>
+          
+  </body>
+</html>
