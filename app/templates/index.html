@@ -2,25 +2,36 @@
   <head>
     <meta http-equiv="refresh" content="60">
     <style>
-      body {font-size: 400px;}
+      div {clear: both;}
       p {float: left; margin: 5px;text-align:center; }
-      p.small {font-size: 50%;}
+      p.value {font-size: 400px;}
+      p.unit {font-size: 200px;}
+      p.mail {color: red;}
     </style>
   </head>
   <body>
-    <p>
+    <div>
+    <p class="value">
     {{'%0.1f' % temperature.outside|float}}
     </p>
-    <p class="small">
+    <p class="unit">
       C&deg;
     </p>
+    </div>
 
-    <p>
+    <div>
+    <p class="value">
       {{'%0.1f' % electricity.normal|float}}
     </p>
-    <p class="small">
+    <p class="unit">
       kW
     </p>
-          
+    </div>
+
+    <div>
+    <p class="mail">
+      {{mailstatus}}
+    </p>
+    </div>          
   </body>
 </html>

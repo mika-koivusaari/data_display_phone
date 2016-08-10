@@ -2,7 +2,35 @@ from flask import render_template
 from app import app
 from app import db,models
 from datetime import datetime, timedelta
+import paho.mqtt.client as mqtt
 
+# The callback for when the client receives a CONNACK response from the server.
+def on_connect(client, userdata, rc):
+    print('Connected with result code '+str(rc))
+    # Subscribing in on_connect() means that if we lose the connection and
+    # reconnect then subscriptions will be renewed.
+    client.subscribe('/house/mail')
+
+# The callback for when a PUBLISH message is received from the server.
+def on_message(client, userdata, msg):
+    global mailstatus
+    print ('Topic: '+ msg.topic+'\nMessage: '+str(msg.payload))
+    mailstatus=msg.payload.decode('UTF-8')
+    print(mailstatus)
+
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_message = on_message
+
+client.connect('roope.local', 1883, 60)
+
+# NonBlocking call that processes network traffic, dispatches callbacks and
+# handles reconnecting.
+# Other loop*() functions are available that give a threaded interface and a
+# manual interface.
+client.loop_start()
+
+mailstatus='ei mittää viel'
 temperature = {}
 electricity = {}
 mail = {}
@@ -18,8 +46,6 @@ def getlastvalue(sensorid):
 @app.route('/index')
 def index():
     temperature = {'outside': getlastvalue(6)} #sensorid 6 is the outside temperature
-#"select mlp.time, mlp.kW mlp_kW, main.kW-mlp.kW main_kw from (select time,value/1.66666 kW from data where sensorid=116 and time>now() - interval 2 minute) mlp,
-# (select time,value/16.6666 kW from data where sensorid=115 and time>now() - interval 2 minute) main where mlp.time=main.time order by 1";
     wholeelectricity=float(getlastvalue(115))/16.6666 #1000 pulses per kWh
     heatpumpelectricity=float(getlastvalue(116))/1.66666 #100 pulses per Kwh
     electricity = {'normal': wholeelectricity-heatpumpelectricity,
@@ -28,5 +54,6 @@ def index():
 
     return render_template('index.html',
                            temperature=temperature,
-                           electricity=electricity)
+                           electricity=electricity,
+                           mailstatus=mailstatus)
 
