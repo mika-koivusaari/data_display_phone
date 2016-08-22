@@ -30,7 +30,7 @@ client.connect('roope.local', 1883, 60)
 # manual interface.
 client.loop_start()
 
-mailstatus='ei mittää viel'
+mailstatus=''
 temperature = {}
 electricity = {}
 mail = {}
@@ -52,8 +52,11 @@ def index():
                    'whole': wholeelectricity,
                    'heatpump': heatpumpelectricity}
 
+    mail=''
+    if mailstatus=='you have mail':
+        mail='Mail!!'
     return render_template('index.html',
                            temperature=temperature,
                            electricity=electricity,
-                           mailstatus=mailstatus)
+                           mailstatus=mail)
 
