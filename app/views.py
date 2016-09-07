@@ -41,8 +41,10 @@ def getlastvalue(sensorid):
     delta=(datetime.now()-timedelta(minutes=2)) #get values from last two minutes, just in case
     try:
         data=models.Data.query.filter(models.Data.sensorid==sensorid,models.Data.time>delta).all()
-    except OperationalError:
+    except OperationalError: #db connection has closed, return nan
         db.session.rollback()
+        return float('NaN')
+    if len(data)==0: #check fi there is data, if not, return error
         return float('NaN')
     return data[-1].value #return last value
  
