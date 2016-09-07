@@ -2,6 +2,7 @@ from flask import render_template
 from app import app
 from app import db,models
 from datetime import datetime, timedelta
+from sqlalchemy.exc import OperationalError
 import paho.mqtt.client as mqtt
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -38,7 +39,11 @@ mail = {}
 #return given sensors last minute value
 def getlastvalue(sensorid):
     delta=(datetime.now()-timedelta(minutes=2)) #get values from last two minutes, just in case
-    data=models.Data.query.filter(models.Data.sensorid==sensorid,models.Data.time>delta).all()
+    try:
+        data=models.Data.query.filter(models.Data.sensorid==sensorid,models.Data.time>delta).all()
+    except OperationalError:
+        db.session.rollback()
+        return float('NaN')
     return data[-1].value #return last value
  
 
