@@ -14,3 +14,4 @@ flask/bin/pip install flipflop
 Run with flasks own web server
 ./run.py
 
+Blog post about this [https://timpramist.blogspot.fi/search/label/you%20have%20mail](https://timpramist.blogspot.fi/search/label/you%20have%20mail)
