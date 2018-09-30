@@ -7,7 +7,22 @@
       p.value {font-size: 350px;}
       p.unit {font-size: 150px;}
       p.mail {font-size: 150px; color: red;}
-    </style>
+      .heatpumplaston {font-size: 100px;}
+      .off {
+        height: 100px;
+        width: 100px;
+        background-color: black;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .on {
+        height: 100px;
+        width: 100px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+      }
+     </style>
   </head>
   <body>
     <div>
@@ -26,6 +41,13 @@
     <p class="unit">
       kW
     </p>
+    </div>
+
+    <div>
+    <p class="heatpumplaston">
+      {{heatpump.laston.strftime('%d.%m. %H:%M')}}
+    </p>
+    <span class="{{heatpump.status}}"></span>
     </div>
 
     <div>

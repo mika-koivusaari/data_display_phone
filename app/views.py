@@ -3,6 +3,8 @@ from app import app
 from app import db,models
 from datetime import datetime, timedelta
 from sqlalchemy.exc import OperationalError
+from sqlalchemy import func
+from sqlalchemy.orm import sessionmaker
 import paho.mqtt.client as mqtt
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -47,7 +49,18 @@ def getlastvalue(sensorid):
     if len(data)==0: #check fi there is data, if not, return error
         return float('NaN')
     return data[-1].value #return last value
- 
+
+def getlastontimeforheatpump(sensorid):
+
+    try:
+        time=db.session.query(db.func.max(models.Data.time)).filter(models.Data.sensorid==sensorid,models.Data.value>5).all()
+    except OperationalError: #db connection has closed, return nan
+        db.session.rollback()
+        return float('NaN')
+    if len(time)==0: #check fi there is data, if not, return error
+        return float('NaN')
+    return time[0][0] #return last value
+
 
 @app.route('/')
 @app.route('/index')
@@ -58,12 +71,16 @@ def index():
     electricity = {'normal': wholeelectricity-heatpumpelectricity,
                    'whole': wholeelectricity,
                    'heatpump': heatpumpelectricity}
-
+    heatpumplastontime=getlastontimeforheatpump(116)
+    heatpumpstatus='on' if heatpumpelectricity > 5 else 'off'
+    heatpump = {'laston':heatpumplastontime,
+                'status':heatpumpstatus}
     mail=''
     if mailstatus=='you have mail':
         mail='Mail!!'
     return render_template('index.html',
                            temperature=temperature,
                            electricity=electricity,
-                           mailstatus=mail)
+                           mailstatus=mail,
+                           heatpump=heatpump)
 
