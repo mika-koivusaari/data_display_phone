@@ -72,7 +72,7 @@ def index():
                    'whole': wholeelectricity,
                    'heatpump': heatpumpelectricity}
     heatpumplastontime=getlastontimeforheatpump(116)
-    heatpumpstatus='on' if heatpumpelectricity > 5 else 'off'
+    heatpumpstatus='on' if heatpumpelectricity > 4 else 'off'
     heatpump = {'laston':heatpumplastontime,
                 'status':heatpumpstatus}
     mail=''
