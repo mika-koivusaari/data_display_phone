@@ -45,7 +45,10 @@
 
     <div>
     <p class="heatpumplaston">
-      {{heatpump.laston.strftime('%d.%m. %H:%M')}}
+      Last on {{heatpump.laston.strftime('%H:%M')}}
+    </p>
+    <p class="heatpumplaston">
+      for {{heatpump.lastonminutes}} minutes
     </p>
     <span class="{{heatpump.status}}"></span>
     </div>

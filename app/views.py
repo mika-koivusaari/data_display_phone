@@ -50,6 +50,20 @@ def getlastvalue(sensorid):
         return float('NaN')
     return data[-1].value #return last value
 
+def getLastOnMinutes(sensorid,start,end):
+    try:
+        data=models.Data.query.filter(models.Data.sensorid==sensorid,models.Data.time>start,models.Data.time<end).order_by(models.Data.time.desc()).all()
+    except OperationalError: #db connection has closed, return nan
+        db.session.rollback()
+        return float('NaN')
+    if len(data)==0: #check fi there is data, if not, return error
+        return float('NaN')
+    print(data)
+    i=0
+    while data[i].value>5:
+        i=i+1
+    return i
+ 
 def getlastontimeforheatpump(sensorid):
 
     try:
@@ -74,7 +88,8 @@ def index():
     heatpumplastontime=getlastontimeforheatpump(116)
     heatpumpstatus='on' if heatpumpelectricity > 4 else 'off'
     heatpump = {'laston':heatpumplastontime,
-                'status':heatpumpstatus}
+                'status':heatpumpstatus,
+                'lastonminutes':getLastOnMinutes(116,heatpumplastontime-timedelta(minutes=60),heatpumplastontime)}
     mail=''
     if mailstatus=='you have mail':
         mail='Mail!!'
